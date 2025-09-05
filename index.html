@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Carteira de Clientes</title>
+  <link rel="stylesheet" href="style.css?v=4">
+</head>
+<body>
+  <h1>📋 Carteira de Clientes</h1>
+
+  <form id="clienteForm">
+    <input type="text" id="nome" placeholder="Nome" required>
+    <input type="email" id="email" placeholder="E-mail" required>
+    <input type="tel" id="telefone" placeholder="Telefone" required>
+    <input type="number" id="renda" placeholder="Renda (R$)">
+    <select id="status">
+      <option value="Novo">Novo</option>
+      <option value="Em negociação">Em negociação</option>
+      <option value="Fechado">Fechado</option>
+      <option value="Perdido">Perdido</option>
+    </select>
+    <input type="date" id="nascimento" placeholder="Data de Nascimento">
+    <input type="date" id="primeiroContato" placeholder="Primeiro Contato">
+    <input type="date" id="proximoContato" placeholder="Próximo Contato">
+    <input type="text" id="interesse" placeholder="Interesse">
+    <button type="submit">Salvar Cliente</button>
+  </form>
+
+  <h2>Clientes Cadastrados</h2>
+  <input type="text" id="busca" placeholder="Pesquisar cliente...">
+  <table>
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Telefone</th>
+        <th>Renda</th>
+        <th>Status</th>
+        <th>Nascimento</th>
+        <th>Primeiro Contato</th>
+        <th>Próximo Contato</th>
+        <th>Interesse</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="listaClientes"></tbody>
+  </table>
+
+  <button id="exportar">Exportar CSV</button>
+
+  <script src="script.js?v=4"></script>
+</body>
+</html>

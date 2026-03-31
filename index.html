@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Carteira de Clientes - Mini CRM Pro+</title>
+  <link rel="stylesheet" href="style_final_v2.css">
+</head>
+<body>
+  <header>
+    <div>
+      <h1>📋 Carteira de Clientes — Mini CRM Pro+</h1>
+      <p class="subtitle">Dados salvos no navegador mesmo ao fechar a página ou desligar o computador</p>
+    </div>
+
+    <div class="header-actions">
+      <div class="filters" id="filtersBar"></div>
+      <div class="import-export">
+        <label class="file-label">CSV<input type="file" id="importCsv" accept=".csv"></label>
+        <label class="file-label">JSON<input type="file" id="importJson" accept=".json"></label>
+        <button id="exportCsv">Exportar CSV</button>
+        <button id="exportJson">Exportar JSON</button>
+        <button id="backup">Backup</button>
+        <button id="toggleKanban">Ver Kanban</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="config-panel">
+    <div class="config-grid">
+      <div class="config-card">
+        <h2>⚙️ Kanban e Status</h2>
+        <div class="inline-form">
+          <input type="text" id="novoStatus" placeholder="Adicionar nova coluna/status">
+          <button id="addStatusBtn">Adicionar</button>
+        </div>
+        <div id="statusList" class="tag-list"></div>
+        <p class="small">Ao remover uma coluna, os clientes dela vão para o primeiro status.</p>
+      </div>
+
+      <div class="config-card">
+        <h2>🧩 Campo extra</h2>
+        <div class="inline-form">
+          <input type="text" id="campoExtraLabel" placeholder="Ex.: Bairro, CRECI, Perfil, Interesse">
+          <button id="saveCampoExtraBtn">Salvar</button>
+        </div>
+        <div class="inline-form compact">
+          <label class="switch-line">
+            <input type="checkbox" id="mostrarCampoExtra">
+            <span>Mostrar campo extra</span>
+          </label>
+          <button id="removeCampoExtraBtn" class="secondary-btn">Retirar campo extra</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="alerts-panel">
+    <div class="panel-head">
+      <h2>🔔 Próximos atendimentos</h2>
+      <button id="clearReadAlerts" class="secondary-btn">Limpar avisos lidos</button>
+    </div>
+    <div id="alertasLista" class="alert-list empty-state">Nenhum alerta pendente no momento.</div>
+  </section>
+
+  <main>
+    <section class="form-section">
+      <h2>Novo cliente</h2>
+      <form id="clienteForm">
+        <input type="hidden" id="clienteId">
+        <input type="text" id="nome" placeholder="Nome" required>
+        <input type="email" id="email" placeholder="E-mail">
+        <input type="tel" id="telefone" placeholder="Telefone">
+        <input type="number" id="renda" placeholder="Renda (R$)" step="0.01">
+        <select id="status"></select>
+        <input type="date" id="nascimento" placeholder="Data de Nascimento">
+        <input type="date" id="primeiroContato" placeholder="Primeiro Contato">
+        <input type="date" id="proximoContato" placeholder="Próximo Contato">
+        <input type="text" id="origem" placeholder="Origem do lead (Google, Panfleto, Site...)">
+        <div id="campoExtraWrap" class="hidden">
+          <input type="text" id="campoExtra" placeholder="Campo extra">
+        </div>
+        <textarea id="observacoes" placeholder="Observações (anotações)"></textarea>
+        <div class="form-actions">
+          <button type="submit" id="submitBtn">Salvar Cliente</button>
+          <button type="button" id="limpar">Limpar</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="list-section">
+      <div class="list-topbar">
+        <input type="text" id="busca" placeholder="Pesquisar cliente por nome, telefone, e-mail, origem ou observações...">
+        <div class="stats" id="statsBar"></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr id="tableHeadRow">
+              <th data-key="nome">Nome ▲▼</th>
+              <th data-key="email">Email</th>
+              <th data-key="telefone">Telefone</th>
+              <th data-key="renda">Renda</th>
+              <th data-key="status">Status</th>
+              <th data-key="nascimento">Nascimento</th>
+              <th data-key="primeiroContato">Primeiro Contato</th>
+              <th data-key="proximoContato">Próximo Contato</th>
+              <th>Prazo</th>
+              <th data-key="origem">Origem</th>
+              <th id="campoExtraHead" data-key="campoExtra" class="hidden">Campo extra</th>
+              <th data-key="observacoes">Observações</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="listaClientes"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="kanban" class="kanban hidden"></section>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="script_final_v2.js"></script>
+</body>
+</html>

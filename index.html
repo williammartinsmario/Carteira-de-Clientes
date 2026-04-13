@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WM Consultoria | CRM Offline Pro V2</title>
+  <style>
+    :root{
+      --bg:#f5f1e8;
+      --bg-2:#efe9dd;
+      --card:#fffdf8;
+      --card-2:#faf6ee;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#ded7ca;
+      --accent:#0f766e;
+      --accent-2:#155e75;
+      --accent-3:#2563eb;
+      --success:#166534;
+      --warning:#b45309;
+      --danger:#b91c1c;
+      --info:#1d4ed8;
+      --shadow:0 14px 40px rgba(31,41,55,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,var(--bg),var(--bg-2));font-family:Inter,system-ui,Arial,sans-serif;color:var(--text);padding:16px}
+    button,input,textarea,select{font:inherit}
+    .app{max-width:1600px;margin:0 auto}
+    .hidden{display:none!important}
+    .card,.panel,.modal-card,.column{background:rgba(255,253,248,.92);border:1px solid rgba(31,41,55,.08);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(6px)}
+    .topbar{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap}
+    .brand h1{margin:0;font-size:32px;line-height:1.05;letter-spacing:-.03em}
+    .brand p{margin:6px 0 0;color:var(--muted)}
+    .brand .line{width:84px;height:4px;border-radius:999px;background:linear-gradient(90deg,var(--accent),#4fb8ac);margin-top:12px}
+    .top-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
+    .btn{border:none;border-radius:14px;padding:11px 15px;font-weight:800;cursor:pointer;transition:.18s transform,.18s box-shadow,.18s filter}
+    .btn:hover{transform:translateY(-1px);filter:saturate(1.03)}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),#1a9387);color:#fff;box-shadow:0 12px 24px rgba(15,118,110,.22)}
+    .btn-secondary{background:#fffaf1;color:var(--text);border:1px solid var(--line)}
+    .btn-accent{background:linear-gradient(135deg,var(--accent-3),#38bdf8);color:#fff;box-shadow:0 12px 24px rgba(37,99,235,.22)}
+    .btn-danger{background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff}
+    .overview{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:14px;margin-bottom:16px}
+    .panel{padding:14px}
+    .panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+    .panel-head h2{margin:0;font-size:17px}
+    .small{font-size:12px;color:var(--muted)}
+    .status-controls{display:flex;gap:8px;flex-wrap:wrap}
+    .status-controls input{flex:1;min-width:180px}
+    .tag-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .tag{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;background:#ecf8f5;border:1px solid #c9ebe5;font-size:13px;font-weight:800;color:#115e59}
+    .tag button{border:none;border-radius:999px;background:#fff;padding:3px 8px;cursor:pointer}
+    .list-box{display:flex;flex-direction:column;gap:10px;max-height:320px;overflow:auto}
+    .mini-item{padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#fffdf9,#f8f4ea)}
+    .mini-item strong{display:block;margin-bottom:4px}
+    .main{display:grid;grid-template-columns:380px 1fr;gap:16px}
+    .form-card{padding:16px;position:sticky;top:14px;height:max-content}
+    .section-title{margin:0 0 12px;font-size:18px}
+    .form-grid{display:grid;gap:12px}
+    .two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .three{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .input-group{display:flex;flex-direction:column;gap:6px;min-width:0}
+    label{font-size:12px;font-weight:800;color:#334155}
+    input,textarea,select{width:100%;padding:12px 13px;border:1px solid #d8d1c5;border-radius:14px;background:#fffdfa;outline:none}
+    input:focus,textarea:focus,select:focus{border-color:#8ecdc4;box-shadow:0 0 0 4px rgba(15,118,110,.10)}
+    textarea{min-height:120px;resize:vertical}
+    .block{padding:14px;border:1px solid #ece5d8;border-radius:16px;background:linear-gradient(180deg,#fffefb,#faf6ee)}
+    .block h3{margin:0 0 12px;font-size:13px;letter-spacing:.07em;text-transform:uppercase;color:#475569}
+    .form-actions{display:flex;gap:10px}
+    .content{display:flex;flex-direction:column;gap:16px}
+    .toolbar{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .toolbar-left,.toolbar-right{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .search{min-width:280px}
+    .stats{display:flex;gap:8px;flex-wrap:wrap}
+    .stat{padding:8px 11px;border-radius:999px;background:#e7f3f1;color:#0f766e;font-size:12px;font-weight:800}
+    .dashboard{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+    .metric{padding:14px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#fffefc,#f7f2e9)}
+    .metric .k{font-size:12px;color:var(--muted);font-weight:700}
+    .metric .v{margin-top:6px;font-size:28px;font-weight:900;letter-spacing:-.03em}
+    .metric .s{margin-top:6px;font-size:12px;color:#475569}
+    .table-wrap{overflow:auto;border-radius:16px;border:1px solid var(--line);background:#fffdfa}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th,td{padding:11px 10px;border-bottom:1px solid #eee7dc;text-align:left;vertical-align:top}
+    th{position:sticky;top:0;background:#f7f1e7;cursor:pointer;white-space:nowrap}
+    tr:hover td{background:#fffcf7}
+    .chip{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;border:1px solid rgba(31,41,55,.06)}
+    .status-Novo{background:#dceefb;color:#155e75}.status-Qualificacao{background:#efe7fb;color:#6d28d9}.status-Em-negociacao{background:#fceddc;color:#b45309}.status-Proposta-enviada{background:#f2e8fb;color:#7c3aed}.status-Ganho{background:#def1e3;color:#166534}.status-Fechado-e-Perdido{background:#ebe7de;color:#4b5563}
+    .deadline-overdue{background:#fde2e2;color:#991b1b}.deadline-today{background:#fff2dd;color:#9a3412}.deadline-soon{background:#dceefb;color:#1d4ed8}.deadline-future{background:#e7f8f1;color:#0f766e}
+    .actions{display:flex;gap:6px;flex-wrap:wrap}
+    .tiny{padding:7px 9px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:800;cursor:pointer}
+    .kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(270px,1fr);gap:14px;overflow:auto;padding-bottom:4px}
+    .column{padding:12px;min-height:280px;border-top:4px solid #3b82f6}
+    .column h3{margin:0 0 10px;font-size:15px}
+    .lead-card{padding:12px;border:1px solid #e3ddd2;border-radius:14px;background:#fffdfa;margin-bottom:10px;cursor:grab;box-shadow:0 8px 20px rgba(38,34,24,.05)}
+    .lead-card .meta{font-size:12px;color:var(--muted);margin-top:6px}
+    .lead-card .card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+    .floating{position:fixed;right:20px;bottom:18px;z-index:20}
+    .empty{color:var(--muted);font-size:14px;padding:10px}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);display:flex;align-items:center;justify-content:center;padding:18px;z-index:50}
+    .modal-card{width:min(920px,96vw);max-height:92vh;overflow:auto;padding:18px}
+    .modal-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:12px}
+    .close{width:40px;height:40px;border:none;border-radius:999px;background:#fff;cursor:pointer;font-weight:900;box-shadow:0 8px 18px rgba(15,23,42,.12)}
+    .timeline{display:flex;flex-direction:column;gap:10px;max-height:240px;overflow:auto}
+    .timeline-item{padding:10px 12px;border-radius:14px;background:#fffdfa;border:1px solid var(--line)}
+    .toast{position:fixed;right:18px;bottom:18px;background:#173431;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 12px 28px rgba(0,0,0,.18);z-index:80}
+    @media (max-width:1200px){.overview,.dashboard,.main{grid-template-columns:1fr}.form-card{position:relative;top:auto}.dashboard{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media (max-width:720px){body{padding:10px}.two,.three,.dashboard{grid-template-columns:1fr}.search{min-width:0;width:100%}.toolbar{align-items:stretch}.toolbar-left,.toolbar-right{width:100%}.floating{right:14px;bottom:14px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>WM Consultoria | CRM Offline Pro V2</h1>
+        <p>CRM visual e gratuito para leads, agenda, funil, follow-up e gestão comercial local.</p>
+        <div class="line"></div>
+      </div>
+      <div class="top-actions">
+        <button class="btn btn-secondary" id="toggleTools">Ferramentas</button>
+        <button class="btn btn-accent" id="toggleKanban">Ver Kanban</button>
+        <button class="btn btn-primary" id="openLeadModalTop">Novo Lead</button>
+      </div>
+    </header>
+
+    <section class="overview">
+      <div class="panel">
+        <div class="panel-head"><h2>Funil e status</h2><span class="small">Ao remover uma coluna, os leads vão para o primeiro status.</span></div>
+        <div class="status-controls">
+          <input id="novoStatus" placeholder="Adicionar nova coluna/status" />
+          <button class="btn btn-primary" id="addStatusBtn">Adicionar</button>
+        </div>
+        <div class="tag-list" id="statusList"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Próximos atendimentos</h2><button class="btn btn-secondary" id="clearReadAlerts">Limpar lidos</button></div>
+        <div class="list-box" id="alertasLista"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h2>Agenda</h2><span class="small">Visitas, ligações, retornos e reuniões.</span></div>
+        <div class="list-box" id="agendaLista"></div>
+      </div>
+    </section>
+
+    <main class="main">
+      <aside class="card form-card">
+        <div class="panel-head"><h2 class="section-title">Cadastro rápido</h2><span class="small">Versão V2 com mais filtros e histórico.</span></div>
+        <form id="clienteForm" class="form-grid">
+          <input type="hidden" id="clienteId" />
+          <div class="block">
+            <h3>Dados básicos</h3>
+            <div class="form-grid">
+              <div class="input-group"><label for="nome">Nome do cliente</label><input id="nome" required placeholder="Ex. Maria Fernanda" /></div>
+              <div class="form-grid two">
+                <div class="input-group"><label for="telefone">Telefone</label><input id="telefone" placeholder="(19) 99999-9999" /></div>
+                <div class="input-group"><label for="email">E-mail</label><input id="email" type="email" placeholder="nome@exemplo.com" /></div>
+              </div>
+            </div>
+          </div>
+          <div class="block">
+            <h3>Perfil comercial</h3>
+            <div class="form-grid two">
+              <div class="input-group"><label for="renda">Renda mensal</label><input id="renda" type="number" step="0.01" placeholder="4500" /></div>
+              <div class="input-group"><label for="status">Status do lead</label><select id="status"></select></div>
+            </div>
+            <div class="form-grid two">
+              <div class="input-group"><label for="origem">Origem</label><input id="origem" list="origensList" placeholder="Selecione ou digite" /></div>
+              <div class="input-group"><label for="regiao">Região</label><input id="regiao" list="regioesList" placeholder="Automática ou manual" /></div>
+            </div>
+            <div class="form-grid two">
+              <div class="input-group"><label for="empreendimento">Empreendimento</label><input id="empreendimento" placeholder="Nome do empreendimento" /></div>
+              <div class="input-group"><label for="score">Score do lead</label><select id="score"><option value="Morno">Morno</option><option value="Quente">Quente</option><option value="Muito quente">Muito quente</option></select></div>
+            </div>
+            <datalist id="origensList">
+              <option value="Google"></option><option value="Facebook"></option><option value="Instagram"></option><option value="Indicação"></option><option value="Plantão"></option><option value="Site"></option><option value="WhatsApp"></option><option value="Outro"></option>
+            </datalist>
+            <datalist id="regioesList"></datalist>
+          </div>
+          <div class="block">
+            <h3>Datas de acompanhamento</h3>
+            <div class="form-grid three">
+              <div class="input-group"><label for="nascimento">Nascimento</label><input id="nascimento" type="date" /></div>
+              <div class="input-group"><label for="primeiroContato">Primeiro contato</label><input id="primeiroContato" type="date" /></div>
+              <div class="input-group"><label for="proximoContato">Próximo contato</label><input id="proximoContato" type="date" /></div>
+            </div>
+          </div>
+          <div class="block">
+            <h3>Observações estratégicas</h3>
+            <div class="input-group"><label for="observacoes">Anotações</label><textarea id="observacoes" placeholder="Perfil, objeções, urgência, documentos, próximos passos..."></textarea></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" id="submitBtn" type="submit">Salvar cliente</button>
+            <button class="btn btn-secondary" id="limpar" type="button">Limpar</button>
+          </div>
+        </form>
+      </aside>
+
+      <section class="content">
+        <section class="card panel">
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <input id="busca" class="search" placeholder="Pesquisar por nome, telefone, e-mail, origem, região ou observações..." />
+              <select id="filterStatus"></select>
+              <select id="filterOrigem"><option value="all">Todas origens</option></select>
+              <select id="filterScore"><option value="all">Todos scores</option><option>Morno</option><option>Quente</option><option>Muito quente</option></select>
+            </div>
+            <div class="toolbar-right">
+              <label class="btn btn-secondary">Importar CSV<input type="file" id="importCsv" accept=".csv" class="hidden"></label>
+              <label class="btn btn-secondary">Restaurar JSON<input type="file" id="importJson" accept=".json" class="hidden"></label>
+              <button class="btn btn-secondary" id="exportExcel">Exportar CSV</button>
+              <button class="btn btn-secondary" id="backup">Backup JSON</button>
+              <button class="btn btn-primary" id="autoRegions">Atualizar regiões</button>
+            </div>
+          </div>
+          <div class="stats" id="statsBar"></div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-head"><h2>Dashboard comercial</h2><span class="small">Leitura rápida da operação e do funil.</span></div>
+          <div class="dashboard" id="dashboard"></div>
+        </section>
+
+        <section class="card panel">
+          <div class="panel-head"><h2>Lista de clientes</h2><span class="small">Clique no nome para abrir detalhes e histórico.</span></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th data-key="nome">Nome ▲▼</th>
+                  <th data-key="telefone">Telefone</th>
+                  <th data-key="email">E-mail</th>
+                  <th data-key="renda">Renda</th>
+                  <th data-key="status">Status</th>
+                  <th data-key="score">Score</th>
+                  <th data-key="origem">Origem</th>
+                  <th data-key="regiao">Região</th>
+                  <th data-key="empreendimento">Empreendimento</th>
+                  <th data-key="proximoContato">Próx. contato</th>
+                  <th>Prazo</th>
+                  <th>Observações</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="listaClientes"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card panel hidden" id="kanbanWrap">
+          <div class="panel-head"><h2>Kanban</h2><span class="small">Arraste os leads entre as etapas do funil.</span></div>
+          <div class="kanban" id="kanban"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <button class="btn btn-primary floating" id="openLeadModal">Novo Lead</button>
+  <div class="toast hidden" id="toast"></div>
+
+  <div class="modal-backdrop hidden" id="leadModalBackdrop">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div><h2 id="formModalTitle" style="margin:0">Novo cliente</h2><div class="small">Cadastre, edite, acompanhe e volte para o mesmo ponto da lista.</div></div>
+        <button class="close" id="closeLeadModal">✕</button>
+      </div>
+      <div id="modalFormMount"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="obsModalBackdrop">
+    <div class="modal-card" style="width:min(760px,94vw)">
+      <div class="modal-head">
+        <div><h2 id="obsModalTitle" style="margin:0">Detalhes do lead</h2><div class="small">Observações e histórico da conta.</div></div>
+        <button class="close" id="closeObsModal">✕</button>
+      </div>
+      <div id="obsModalText" style="white-space:pre-wrap;line-height:1.6;background:#fffdfa;border:1px solid var(--line);padding:14px;border-radius:16px"></div>
+      <div style="height:14px"></div>
+      <div class="panel-head"><h2 style="font-size:16px">Timeline</h2><button class="btn btn-secondary" id="addHistoryBtn">Adicionar interação</button></div>
+      <div class="timeline" id="timelineList"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="scheduleModalBackdrop">
+    <div class="modal-card" style="width:min(600px,94vw)">
+      <div class="modal-head">
+        <div><h2 style="margin:0">Agendar atendimento</h2><div class="small" id="scheduleClienteNome"></div></div>
+        <button class="close" id="closeScheduleModal">✕</button>
+      </div>
+      <div class="form-grid two">
+        <input id="scheduleDate" type="date" />
+        <input id="scheduleTime" type="time" />
+      </div>
+      <div style="height:10px"></div>
+      <textarea id="scheduleNote" placeholder="Observação do agendamento: visita, retorno, ligação, reunião..."></textarea>
+      <div style="height:12px"></div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" id="cancelScheduleBtn">Cancelar</button>
+        <button class="btn btn-primary" id="saveScheduleBtn">Salvar agendamento</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'clientesprov4';
+    const ALERTS_KEY = 'clientesalertaslidosv4';
+    const SETTINGS_KEY = 'clientessettingsv4';
+    const DEFAULT_SETTINGS = {
+      statuses: ['Novo','Qualificacao','Em negociacao','Proposta enviada','Ganho','Fechado e Perdido'],
+      regioes: ['Centro','Galleria','Vila Industrial','Jardim Paraiso Viracopos','Jardim Morumbi','Vila Uniao','Ouro Verde','Campo Grande'],
+      theme: 'light'
+    };
+
+    const $ = (s,p=document)=>p.querySelector(s);
+    const $$ = (s,p=document)=>Array.from(p.querySelectorAll(s));
+    const uid = ()=> Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+    const clone = v => JSON.parse(JSON.stringify(v));
+    const normalize = v => String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+    const digits = v => String(v||'').replace(/\D/g,'');
+    const titleCase = v => String(v||'').toLowerCase().split(' ').filter(Boolean).map(s=>s[0]?.toUpperCase()+s.slice(1)).join(' ');
+    const escapeHtml = v => String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+
+    function safeLoad(key, fallback){
+      try{ return JSON.parse(localStorage.getItem(key)) ?? fallback; }
+      catch{ return fallback; }
+    }
+    function safeSave(key, value){
+      try{ localStorage.setItem(key, JSON.stringify(value)); return true; }
+      catch(err){ showToast('Falha ao salvar no navegador. Faça backup JSON.'); return false; }
+    }
+
+    const state = {
+      settings: safeLoad(SETTINGS_KEY, clone(DEFAULT_SETTINGS)),
+      clientes: safeLoad(STORAGE_KEY, []),
+      alertasLidos: safeLoad(ALERTS_KEY, []),
+      sort: { key:'nome', dir:1 },
+      filters: { status:'all', origem:'all', score:'all', busca:'' },
+      currentSchedulingClientId: null,
+      currentObsClientId: null
+    };
+
+    const refs = {
+      clienteForm: $('#clienteForm'), clienteId: $('#clienteId'), nome: $('#nome'), telefone: $('#telefone'), email: $('#email'),
+      renda: $('#renda'), status: $('#status'), nascimento: $('#nascimento'), primeiroContato: $('#primeiroContato'),
+      proximoContato: $('#proximoContato'), origem: $('#origem'), regiao: $('#regiao'), empreendimento: $('#empreendimento'),
+      score: $('#score'), observacoes: $('#observacoes'), busca: $('#busca'), listaClientes: $('#listaClientes'),
+      exportExcel: $('#exportExcel'), importCsv: $('#importCsv'), importJson: $('#importJson'), backup: $('#backup'),
+      alertasLista: $('#alertasLista'), agendaLista: $('#agendaLista'), toast: $('#toast'), statsBar: $('#statsBar'),
+      dashboard: $('#dashboard'), kanban: $('#kanban'), kanbanWrap: $('#kanbanWrap'), toggleKanban: $('#toggleKanban'),
+      novoStatus: $('#novoStatus'), addStatusBtn: $('#addStatusBtn'), statusList: $('#statusList'), regiosList: $('#regioesList'),
+      autoRegions: $('#autoRegions'), filterStatus: $('#filterStatus'), filterOrigem: $('#filterOrigem'), filterScore: $('#filterScore'),
+      clearReadAlerts: $('#clearReadAlerts'), leadModalBackdrop: $('#leadModalBackdrop'), openLeadModal: $('#openLeadModal'),
+      openLeadModalTop: $('#openLeadModalTop'), closeLeadModal: $('#closeLeadModal'), modalFormMount: $('#modalFormMount'),
+      formModalTitle: $('#formModalTitle'), obsModalBackdrop: $('#obsModalBackdrop'), closeObsModal: $('#closeObsModal'),
+      obsModalText: $('#obsModalText'), obsModalTitle: $('#obsModalTitle'), timelineList: $('#timelineList'), addHistoryBtn: $('#addHistoryBtn'),
+      scheduleModalBackdrop: $('#scheduleModalBackdrop'), closeScheduleModal: $('#closeScheduleModal'), cancelScheduleBtn: $('#cancelScheduleBtn'),
+      saveScheduleBtn: $('#saveScheduleBtn'), scheduleClienteNome: $('#scheduleClienteNome'), scheduleDate: $('#scheduleDate'),
+      scheduleTime: $('#scheduleTime'), scheduleNote: $('#scheduleNote'), toggleTools: $('#toggleTools')
+    };
+
+    function firstStatus(){ return state.settings.statuses[0] || 'Novo'; }
+    function ensureRegiaoOption(regiao){
+      const clean = titleCase(String(regiao||'').trim());
+      if(!clean) return '';
+      if(!state.settings.regioes.some(r=>normalize(r)===normalize(clean))){
+        state.settings.regioes.push(clean);
+        state.settings.regioes.sort((a,b)=>a.localeCompare(b,'pt-BR'));
+        saveSettings();
+      }
+      return clean;
+    }
+    function inferirRegiao(observacoes=''){
+      const texto = normalize(observacoes);
+      if(!texto) return '';
+      const aliases = {
+        'Campo Grande':['campo grande'],
+        'Galleria':['galleria','galeria'],
+        'Vila Industrial':['vila industrial'],
+        'Jardim Paraiso Viracopos':['viracopos','paraiso viracopos','jardim paraiso viracopos'],
+        'Jardim Morumbi':['jardim morumbi'],
+        'Vila Uniao':['vila uniao'],
+        'Ouro Verde':['ouro verde'],
+        'Centro':['centro']
+      };
+      for(const regiao of state.settings.regioes){ if(texto.includes(normalize(regiao))) return regiao; }
+      for(const [regiao,termos] of Object.entries(aliases)){ if(termos.some(t=>texto.includes(normalize(t)))) return ensureRegiaoOption(regiao); }
+      return '';
+    }
+    function sanitizeCliente(cliente){
+      const c = {
+        id: cliente.id || uid(),
+        nome: String(cliente.nome||'').trim(),
+        telefone: String(cliente.telefone||'').trim(),
+        email: String(cliente.email||'').trim(),
+        renda: String(cliente.renda||'').trim(),
+        status: state.settings.statuses.includes(cliente.status) ? cliente.status : firstStatus(),
+        score: ['Morno','Quente','Muito quente'].includes(cliente.score) ? cliente.score : 'Morno',
+        origem: String(cliente.origem||'').trim(),
+        regiao: ensureRegiaoOption(String(cliente.regiao||'').trim()) || inferirRegiao(cliente.observacoes||''),
+        empreendimento: String(cliente.empreendimento||'').trim(),
+        nascimento: String(cliente.nascimento||''),
+        primeiroContato: String(cliente.primeiroContato||''),
+        proximoContato: String(cliente.proximoContato||''),
+        observacoes: String(cliente.observacoes||'').trim(),
+        agendamentos: Array.isArray(cliente.agendamentos) ? cliente.agendamentos.filter(a=>a?.datetime).map(a=>({id:a.id||uid(), datetime:a.datetime, note:String(a.note||''), done:!!a.done})) : [],
+        historico: Array.isArray(cliente.historico) ? cliente.historico.map(h=>({id:h.id||uid(), type:String(h.type||'Interação'), text:String(h.text||''), createdAt:h.createdAt||new Date().toISOString()})) : [],
+        createdAt: cliente.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      syncProximoContato(c);
+      return c;
+    }
+    function dedupeKey(c){ return [normalize(c.nome), digits(c.telefone), normalize(c.email)].join('|'); }
+    function clienteExists(cliente, ignoreId=''){ const key = dedupeKey(cliente); return state.clientes.some(c=>c.id!==ignoreId && dedupeKey(c)===key && key.replace(/\|/g,'')); }
+    function saveClientes(){ safeSave(STORAGE_KEY, state.clientes); }
+    function saveSettings(){ safeSave(SETTINGS_KEY, state.settings); }
+    function saveAlertas(){ safeSave(ALERTS_KEY, state.alertasLidos); }
+    function showToast(msg, timeout=3000){ refs.toast.textContent = msg; refs.toast.classList.remove('hidden'); clearTimeout(window.__toast); window.__toast = setTimeout(()=>refs.toast.classList.add('hidden'), timeout); }
+    function formatDate(v){ if(!v) return ''; const [y,m,d]=String(v).split('-'); return y&&m&&d ? `${d}/${m}/${y}` : v; }
+    function formatCurrency(v){ if(v===null || v===undefined || v==='') return ''; const n = Number(String(v).replace(',','.')); return Number.isNaN(n) ? v : new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(n); }
+    function formatDateTime(v){ if(!v) return ''; const [date,time] = String(v).split('T'); return `${formatDate(date)}${time?` às ${time.slice(0,5)}`:''}`; }
+    function prazoInfo(dateStr){
+      if(!dateStr) return {label:'Sem data', className:'deadline-future', diff:9999};
+      const hoje = new Date(); hoje.setHours(0,0,0,0);
+      const alvo = new Date(`${dateStr}T00:00:00`);
+      const diff = Math.round((alvo-hoje)/86400000);
+      if(diff<0) return {label:`Atrasado ${Math.abs(diff)}d`, className:'deadline-overdue', diff};
+      if(diff===0) return {label:'Hoje', className:'deadline-today', diff};
+      if(diff<=3) return {label:`Em ${diff}d`, className:'deadline-soon', diff};
+      return {label:`Em ${diff}d`, className:'deadline-future', diff};
+    }
+    function collectSchedules(){
+      return state.clientes.flatMap(cliente => (cliente.agendamentos||[]).filter(a=>!a.done).map(a=>({clienteId:cliente.id,clienteNome:cliente.nome,datetime:a.datetime,note:a.note||'',scheduleId:a.id}))).sort((a,b)=>a.datetime.localeCompare(b.datetime));
+    }
+    function getPendingSchedules(cliente){ return (cliente.agendamentos||[]).filter(a=>!a.done).sort((a,b)=>a.datetime.localeCompare(b.datetime)); }
+    function syncProximoContato(cliente){ const pending = getPendingSchedules(cliente); if(pending.length) cliente.proximoContato = pending[0].datetime.slice(0,10); }
+    function getFilteredClientes(){
+      const q = normalize(state.filters.busca);
+      return state.clientes.filter(c=>{
+        const text = normalize([c.nome,c.telefone,c.email,c.origem,c.regiao,c.observacoes,c.empreendimento].join(' '));
+        const okBusca = !q || text.includes(q);
+        const okStatus = state.filters.status==='all' || c.status===state.filters.status;
+        const okOrigem = state.filters.origem==='all' || c.origem===state.filters.origem;
+        const okScore = state.filters.score==='all' || c.score===state.filters.score;
+        return okBusca && okStatus && okOrigem && okScore;
+      }).sort((a,b)=>{
+        const av = normalize(a[state.sort.key]||'');
+        const bv = normalize(b[state.sort.key]||'');
+        return av.localeCompare(bv,'pt-BR') * state.sort.dir;
+      });
+    }
+    function addHistory(clienteId, type, text){
+      const c = state.clientes.find(x=>x.id===clienteId); if(!c) return;
+      c.historico = Array.isArray(c.historico) ? c.historico : [];
+      c.historico.unshift({id:uid(), type, text, createdAt:new Date().toISOString()});
+      c.updatedAt = new Date().toISOString();
+      saveClientes();
+    }
+    function renderStatusOptions(){
+      refs.status.innerHTML = state.settings.statuses.map(s=>`<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+      refs.filterStatus.innerHTML = `<option value="all">Todos status</option>` + state.settings.statuses.map(s=>`<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+      refs.statusList.innerHTML = state.settings.statuses.map(s=>`<span class="tag">${escapeHtml(s)} <button data-remove-status="${escapeHtml(s)}">×</button></span>`).join('');
+    }
+    function renderRegioesList(){ refs.regiosList.innerHTML = state.settings.regioes.map(r=>`<option value="${escapeHtml(r)}"></option>`).join(''); }
+    function renderFilterOrigens(){
+      const origens = [...new Set(state.clientes.map(c=>c.origem).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+      refs.filterOrigem.innerHTML = `<option value="all">Todas origens</option>` + origens.map(o=>`<option value="${escapeHtml(o)}">${escapeHtml(o)}</option>`).join('');
+      refs.filterOrigem.value = state.filters.origem;
+    }
+    function renderStats(){
+      const total = state.clientes.length;
+      const filtrados = getFilteredClientes().length;
+      const hoje = state.clientes.filter(c=>prazoInfo(c.proximoContato).diff===0).length;
+      const atrasados = state.clientes.filter(c=>prazoInfo(c.proximoContato).diff<0).length;
+      const ganhos = state.clientes.filter(c=>c.status==='Ganho').length;
+      refs.statsBar.innerHTML = [
+        `Total: ${total}`,
+        `Na tela: ${filtrados}`,
+        `Hoje: ${hoje}`,
+        `Atrasados: ${atrasados}`,
+        `Ganhos: ${ganhos}`
+      ].map(v=>`<span class="stat">${v}</span>`).join('');
+    }
+    function renderDashboard(){
+      const total = state.clientes.length;
+      const ganhos = state.clientes.filter(c=>c.status==='Ganho').length;
+      const perdidos = state.clientes.filter(c=>c.status==='Fechado e Perdido').length;
+      const quentes = state.clientes.filter(c=>c.score==='Muito quente').length;
+      const atrasados = state.clientes.filter(c=>prazoInfo(c.proximoContato).diff<0).length;
+      const taxa = total ? Math.round((ganhos/total)*100) : 0;
+      const topOrigem = Object.entries(state.clientes.reduce((acc,c)=>{ if(c.origem) acc[c.origem]=(acc[c.origem]||0)+1; return acc; },{})).sort((a,b)=>b[1]-a[1])[0];
+      const cards = [
+        ['Leads totais', total, 'Base total cadastrada'],
+        ['Taxa de ganho', `${taxa}%`, 'Ganho sobre base total'],
+        ['Muito quentes', quentes, 'Leads com maior prioridade'],
+        ['Atrasados', atrasados, 'Pendências vencidas'],
+        ['Melhor origem', topOrigem ? `${topOrigem[0]} (${topOrigem[1]})` : '—', 'Canal com mais leads']
+      ];
+      refs.dashboard.innerHTML = cards.map(([k,v,s])=>`<div class="metric"><div class="k">${escapeHtml(k)}</div><div class="v">${escapeHtml(v)}</div><div class="s">${escapeHtml(s)}</div></div>`).join('');
+    }
+    function renderAlertas(){
+      const itens = state.clientes.filter(c=>c.proximoContato).map(c=>({cliente:c,p:prazoInfo(c.proximoContato)})).filter(x=>x.p.diff<=3).sort((a,b)=>a.p.diff-b.p.diff).slice(0,12);
+      if(!itens.length){ refs.alertasLista.innerHTML = `<div class="empty">Nenhum alerta pendente no momento.</div>`; return; }
+      refs.alertasLista.innerHTML = itens.map(({cliente,p})=>`<div class="mini-item"><strong>${escapeHtml(cliente.nome)}</strong><div class="small">${escapeHtml(formatDate(cliente.proximoContato))} • ${escapeHtml(p.label)} • ${escapeHtml(cliente.status)}</div><div class="actions" style="margin-top:8px"><button class="tiny" data-open-client="${cliente.id}">Abrir</button><button class="tiny" data-schedule="${cliente.id}">Agendar</button></div></div>`).join('');
+    }
+    function renderAgenda(){
+      const ag = collectSchedules().slice(0,12);
+      if(!ag.length){ refs.agendaLista.innerHTML = `<div class="empty">Nenhum agendamento cadastrado.</div>`; return; }
+      refs.agendaLista.innerHTML = ag.map(item=>`<div class="mini-item"><strong>${escapeHtml(item.clienteNome)}</strong><div class="small">${escapeHtml(formatDateTime(item.datetime))}</div><div class="small">${escapeHtml(item.note || 'Sem observação')}</div><div class="actions" style="margin-top:8px"><button class="tiny" data-open-client="${item.clienteId}">Abrir</button><button class="tiny" data-schedule-done="${item.clienteId}|${item.scheduleId}">Concluir</button><button class="tiny" data-schedule-remove="${item.clienteId}|${item.scheduleId}">Remover</button></div></div>`).join('');
+    }
+    function renderTable(){
+      const rows = getFilteredClientes();
+      if(!rows.length){ refs.listaClientes.innerHTML = `<tr><td colspan="13" class="empty">Nenhum cliente encontrado.</td></tr>`; return; }
+      refs.listaClientes.innerHTML = rows.map(c=>{
+        const prazo = prazoInfo(c.proximoContato);
+        const statusClass = `status-${normalize(c.status).replace(/\s+/g,'-').replace(/[^a-z-]/g,'')}`;
+        return `<tr>
+          <td><button class="tiny" data-open-client="${c.id}">${escapeHtml(c.nome || 'Sem nome')}</button></td>
+          <td>${escapeHtml(c.telefone||'')}</td>
+          <td>${escapeHtml(c.email||'')}</td>
+          <td>${escapeHtml(formatCurrency(c.renda))}</td>
+          <td><span class="chip ${statusClass}">${escapeHtml(c.status)}</span></td>
+          <td>${escapeHtml(c.score||'')}</td>
+          <td>${escapeHtml(c.origem||'')}</td>
+          <td>${escapeHtml(c.regiao||'')}</td>
+          <td>${escapeHtml(c.empreendimento||'')}</td>
+          <td>${escapeHtml(formatDate(c.proximoContato))}</td>
+          <td><span class="chip ${prazo.className}">${escapeHtml(prazo.label)}</span></td>
+          <td>${escapeHtml((c.observacoes||'').slice(0,80))}${(c.observacoes||'').length>80?'...':''}</td>
+          <td><div class="actions">
+            <button class="tiny" data-edit="${c.id}">Editar</button>
+            <button class="tiny" data-schedule="${c.id}">Agendar</button>
+            <button class="tiny" data-history-client="${c.id}">Histórico</button>
+            <button class="tiny" data-delete="${c.id}">Excluir</button>
+          </div></td>
+        </tr>`;
+      }).join('');
+    }
+    function renderKanban(){
+      refs.kanban.innerHTML = state.settings.statuses.map(status=>{
+        const cards = getFilteredClientes().filter(c=>c.status===status).map(c=>`<div class="lead-card" draggable="true" data-drag-id="${c.id}">
+          <strong>${escapeHtml(c.nome)}</strong>
+          <div class="meta">${escapeHtml(c.origem || 'Sem origem')} • ${escapeHtml(c.score || 'Morno')}</div>
+          <div class="meta">${escapeHtml(c.regiao || 'Sem região')} ${c.empreendimento ? '• '+escapeHtml(c.empreendimento) : ''}</div>
+          <div class="meta">Próximo contato: ${escapeHtml(formatDate(c.proximoContato) || 'Sem data')}</div>
+          <div class="card-actions"><button class="tiny" data-edit="${c.id}">Editar</button><button class="tiny" data-schedule="${c.id}">Agendar</button></div>
+        </div>`).join('') || `<div class="empty">Nenhum lead nessa etapa.</div>`;
+        const border = ['#3b82f6','#8b5cf6','#f59e0b','#a855f7','#16a34a','#64748b'][state.settings.statuses.indexOf(status)%6];
+        return `<div class="column" data-drop-status="${escapeHtml(status)}" style="border-top-color:${border}"><h3>${escapeHtml(status)}</h3>${cards}</div>`;
+      }).join('');
+    }
+    function renderTimeline(cliente){
+      const hist = Array.isArray(cliente.historico) ? cliente.historico : [];
+      refs.timelineList.innerHTML = hist.length ? hist.map(h=>`<div class="timeline-item"><strong>${escapeHtml(h.type)}</strong><div class="small">${escapeHtml(new Date(h.createdAt).toLocaleString('pt-BR'))}</div><div style="margin-top:6px">${escapeHtml(h.text)}</div></div>`).join('') : `<div class="empty">Nenhuma interação registrada.</div>`;
+    }
+    function renderAll(){ renderStatusOptions(); renderRegioesList(); renderFilterOrigens(); renderStats(); renderDashboard(); renderAlertas(); renderAgenda(); renderTable(); renderKanban(); }
+    function resetForm(){ refs.clienteForm.reset(); refs.clienteId.value=''; refs.status.value = firstStatus(); refs.score.value='Morno'; }
+    function openLeadModal(edit=false){ refs.leadModalBackdrop.classList.remove('hidden'); refs.formModalTitle.textContent = edit ? 'Editar cliente' : 'Novo cliente'; if(!refs.modalFormMount.contains(refs.clienteForm)){ refs.modalFormMount.appendChild(refs.clienteForm); } }
+    function closeLeadModal(){ refs.leadModalBackdrop.classList.add('hidden'); document.querySelector('.form-card').appendChild(refs.clienteForm); }
+    function fillForm(cliente){
+      refs.clienteId.value = cliente.id; refs.nome.value = cliente.nome||''; refs.telefone.value = cliente.telefone||''; refs.email.value = cliente.email||''; refs.renda.value = cliente.renda||'';
+      refs.status.value = cliente.status||firstStatus(); refs.score.value = cliente.score||'Morno'; refs.origem.value = cliente.origem||''; refs.regiao.value = cliente.regiao||''; refs.empreendimento.value = cliente.empreendimento||'';
+      refs.nascimento.value = cliente.nascimento||''; refs.primeiroContato.value = cliente.primeiroContato||''; refs.proximoContato.value = cliente.proximoContato||''; refs.observacoes.value = cliente.observacoes||'';
+    }
+    function abrirCliente(id){
+      const c = state.clientes.find(x=>x.id===id); if(!c) return;
+      state.currentObsClientId = id;
+      refs.obsModalTitle.textContent = c.nome || 'Detalhes do lead';
+      refs.obsModalText.textContent = [
+        `Telefone: ${c.telefone || '—'}`,
+        `E-mail: ${c.email || '—'}`,
+        `Status: ${c.status || '—'}`,
+        `Score: ${c.score || '—'}`,
+        `Origem: ${c.origem || '—'}`,
+        `Região: ${c.regiao || '—'}`,
+        `Empreendimento: ${c.empreendimento || '—'}`,
+        `Próximo contato: ${formatDate(c.proximoContato) || '—'}`,
+        '',
+        c.observacoes || 'Sem observações.'
+      ].join('\n');
+      renderTimeline(c);
+      refs.obsModalBackdrop.classList.remove('hidden');
+    }
+    function closeObsModal(){ refs.obsModalBackdrop.classList.add('hidden'); state.currentObsClientId = null; }
+    function openScheduleModal(clienteId){
+      const c = state.clientes.find(x=>x.id===clienteId); if(!c) return;
+      state.currentSchedulingClientId = clienteId; refs.scheduleClienteNome.textContent = c.nome || ''; refs.scheduleDate.value=''; refs.scheduleTime.value='09:00'; refs.scheduleNote.value=''; refs.scheduleModalBackdrop.classList.remove('hidden');
+    }
+    function closeScheduleModal(){ refs.scheduleModalBackdrop.classList.add('hidden'); state.currentSchedulingClientId = null; }
+    function saveSchedule(){
+      const c = state.clientes.find(x=>x.id===state.currentSchedulingClientId); if(!c) return;
+      if(!refs.scheduleDate.value){ showToast('Selecione a data do agendamento.'); return; }
+      const datetime = `${refs.scheduleDate.value}T${refs.scheduleTime.value || '09:00'}`;
+      c.agendamentos = Array.isArray(c.agendamentos) ? c.agendamentos : [];
+      c.agendamentos.push({id:uid(), datetime, note:refs.scheduleNote.value.trim(), done:false});
+      syncProximoContato(c); c.updatedAt = new Date().toISOString();
+      addHistory(c.id,'Agendamento', `Agendado para ${formatDateTime(datetime)}${refs.scheduleNote.value.trim() ? ' — '+refs.scheduleNote.value.trim() : ''}`);
+      saveClientes(); renderAll(); closeScheduleModal(); showToast('Agendamento salvo com sucesso.');
+    }
+    function concluirAgendamento(clienteId, scheduleId){
+      const c = state.clientes.find(x=>x.id===clienteId); if(!c) return;
+      const ag = (c.agendamentos||[]).find(a=>a.id===scheduleId); if(!ag) return;
+      ag.done = true; syncProximoContato(c); c.updatedAt = new Date().toISOString(); addHistory(c.id,'Agendamento concluído', formatDateTime(ag.datetime)); saveClientes(); renderAll(); showToast('Agendamento concluído.');
+    }
+    function removerAgendamento(clienteId, scheduleId){
+      const c = state.clientes.find(x=>x.id===clienteId); if(!c) return;
+      c.agendamentos = (c.agendamentos||[]).filter(a=>a.id!==scheduleId); syncProximoContato(c); c.updatedAt = new Date().toISOString(); saveClientes(); renderAll(); showToast('Agendamento removido.');
+    }
+    function exportCsv(){
+      const header = ['Nome','Telefone','Email','Renda','Status','Score','Origem','Regiao','Empreendimento','Nascimento','Primeiro Contato','Proximo Contato','Observacoes'];
+      const escapeCsv = v => { const s = String(v ?? ''); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
+      const rows = state.clientes.map(c=>[c.nome,c.telefone,c.email,c.renda,c.status,c.score,c.origem,c.regiao,c.empreendimento,c.nascimento,c.primeiroContato,c.proximoContato,c.observacoes].map(escapeCsv).join(','));
+      downloadBlob('\ufeff'+[header.join(','),...rows].join('\n'),'text/csv;charset=utf-8','clientes-v2.csv');
+      showToast('CSV exportado com sucesso.');
+    }
+    function exportJson(){ downloadBlob(JSON.stringify({settings:state.settings,clientes:state.clientes},null,2),'application/json','clientes-v2-backup.json'); showToast('Backup JSON exportado.'); }
+    function downloadBlob(content, type, filename){ const blob = new Blob([content],{type}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; a.click(); setTimeout(()=>URL.revokeObjectURL(url),1500); }
+    function decodeFile(file, callback){ const reader = new FileReader(); reader.onload = e=>callback(new TextDecoder('utf-8').decode(e.target.result)); reader.readAsArrayBuffer(file); }
+    function parseCSV(text){
+      const rows=[]; let cur=[], field='', i=0, inQuotes=false;
+      while(i<text.length){ const ch=text[i]; if(inQuotes){ if(ch==='"'){ if(text[i+1]==='"'){ field+='"'; i+=2; continue; } inQuotes=false; i++; continue; } field+=ch; i++; continue; }
+        if(ch==='"'){ inQuotes=true; i++; continue; } if(ch===','){ cur.push(field); field=''; i++; continue; } if(ch==='\r'){ i++; continue; } if(ch==='\n'){ cur.push(field); rows.push(cur); cur=[]; field=''; i++; continue; } field+=ch; i++; }
+      if(field || cur.length){ cur.push(field); rows.push(cur); }
+      return rows;
+    }
+    function importCSVFile(file){
+      decodeFile(file, text=>{
+        const rows = parseCSV(text).filter(r=>r.some(c=>String(c).trim()));
+        if(rows.length<2){ showToast('CSV vazio ou inválido.'); return; }
+        const header = rows[0].map(h=>normalize(h));
+        const idx = name => header.findIndex(h=>name.includes(h));
+        let importados=0, ignorados=0;
+        for(let i=1;i<rows.length;i++){
+          const row = rows[i];
+          const cliente = sanitizeCliente({
+            nome: row[idx(['nome'])] || row[0], telefone: row[idx(['telefone','celular','fone'])] || '', email: row[idx(['email','e-mail'])] || '', renda: row[idx(['renda'])] || '',
+            status: row[idx(['status'])] || firstStatus(), score: row[idx(['score'])] || 'Morno', origem: row[idx(['origem'])] || '', regiao: row[idx(['regiao','regiao'])] || '',
+            empreendimento: row[idx(['empreendimento'])] || '', nascimento: row[idx(['nascimento'])] || '', primeiroContato: row[idx(['primeiro contato'])] || '', proximoContato: row[idx(['proximo contato','próximo contato'])] || '', observacoes: row[idx(['observacoes','observações'])] || ''
+          });
+          if(!cliente.nome || clienteExists(cliente)){ ignorados++; continue; }
+          state.clientes.push(cliente); importados++;
+        }
+        saveClientes(); renderAll(); showToast(`CSV importado: ${importados} novos, ${ignorados} ignorados.`);
+      });
+    }
+    function importJSONFile(file){
+      decodeFile(file, text=>{
+        try{
+          const data = JSON.parse(text);
+          const rows = Array.isArray(data) ? data : Array.isArray(data.clientes) ? data.clientes : null;
+          if(!rows){ showToast('JSON inválido.'); return; }
+          if(data.settings?.statuses?.length) state.settings.statuses = [...new Set(data.settings.statuses.map(String))];
+          if(Array.isArray(data.settings?.regioes)) state.settings.regioes = [...new Set(data.settings.regioes.map(String))];
+          let importados=0, ignorados=0;
+          rows.forEach(item=>{ const c=sanitizeCliente(item); if(!c.nome || clienteExists(c)){ ignorados++; return; } state.clientes.push(c); importados++; });
+          saveSettings(); saveClientes(); renderAll(); showToast(`JSON importado: ${importados} novos, ${ignorados} ignorados.`);
+        }catch{ showToast('Erro ao ler JSON.'); }
+      });
+    }
+    function atualizarRegioesAutomaticamente(){ let atualizados=0; state.clientes = state.clientes.map(c=>{ const detectada = inferirRegiao(c.observacoes); if(!c.regiao && detectada){ c.regiao = detectada; atualizados++; } return c; }); saveClientes(); renderAll(); showToast(atualizados ? `${atualizados} regiões atualizadas.` : 'Nenhuma nova região encontrada.'); }
+
+    refs.clienteForm.addEventListener('submit', e=>{
+      e.preventDefault();
+      const payload = sanitizeCliente({
+        id: refs.clienteId.value || uid(), nome: refs.nome.value, telefone: refs.telefone.value, email: refs.email.value, renda: refs.renda.value,
+        status: refs.status.value, score: refs.score.value, origem: refs.origem.value, regiao: refs.regiao.value, empreendimento: refs.empreendimento.value,
+        nascimento: refs.nascimento.value, primeiroContato: refs.primeiroContato.value, proximoContato: refs.proximoContato.value, observacoes: refs.observacoes.value,
+        agendamentos: state.clientes.find(c=>c.id===refs.clienteId.value)?.agendamentos || [], historico: state.clientes.find(c=>c.id===refs.clienteId.value)?.historico || []
+      });
+      if(!payload.nome){ showToast('Informe o nome do cliente.'); return; }
+      if(clienteExists(payload, refs.clienteId.value)){ showToast('Já existe um cliente com esses dados principais.'); return; }
+      const existingIndex = state.clientes.findIndex(c=>c.id===payload.id);
+      if(existingIndex >= 0){
+        state.clientes[existingIndex] = { ...state.clientes[existingIndex], ...payload, updatedAt:new Date().toISOString() };
+        addHistory(payload.id,'Atualização de cadastro','Dados principais atualizados.');
+        showToast('Cliente atualizado com sucesso.');
+      } else {
+        state.clientes.unshift(payload);
+        addHistory(payload.id,'Novo lead','Lead cadastrado no CRM.');
+        showToast('Cliente salvo com sucesso.');
+      }
+      saveClientes(); renderAll(); resetForm(); closeLeadModal();
+    });
+
+    refs.limpar.addEventListener('click', resetForm);
+    refs.busca.addEventListener('input', e=>{ state.filters.busca=e.target.value; renderTable(); renderKanban(); renderStats(); });
+    refs.filterStatus.addEventListener('change', e=>{ state.filters.status=e.target.value; renderAll(); });
+    refs.filterOrigem.addEventListener('change', e=>{ state.filters.origem=e.target.value; renderAll(); });
+    refs.filterScore.addEventListener('change', e=>{ state.filters.score=e.target.value; renderAll(); });
+    refs.addStatusBtn.addEventListener('click', ()=>{ const v=titleCase(refs.novoStatus.value); if(!v) return; if(state.settings.statuses.some(s=>normalize(s)===normalize(v))) return showToast('Esse status já existe.'); state.settings.statuses.push(v); saveSettings(); refs.novoStatus.value=''; renderAll(); showToast('Status adicionado.'); });
+    refs.statusList.addEventListener('click', e=>{ const btn=e.target.closest('[data-remove-status]'); if(!btn) return; const status=btn.dataset.removeStatus; if(state.settings.statuses.length<=1) return showToast('Mantenha ao menos um status.'); if(!confirm(`Remover o status "${status}"?`)) return; state.settings.statuses = state.settings.statuses.filter(s=>s!==status); state.clientes = state.clientes.map(c=> c.status===status ? {...c,status:firstStatus()} : c); saveSettings(); saveClientes(); renderAll(); showToast('Status removido.'); });
+    refs.exportExcel.addEventListener('click', exportCsv);
+    refs.backup.addEventListener('click', exportJson);
+    refs.importCsv.addEventListener('change', e=> e.target.files[0] && importCSVFile(e.target.files[0]));
+    refs.importJson.addEventListener('change', e=> e.target.files[0] && importJSONFile(e.target.files[0]));
+    refs.autoRegions.addEventListener('click', atualizarRegioesAutomaticamente);
+    refs.toggleKanban.addEventListener('click', ()=> refs.kanbanWrap.classList.toggle('hidden'));
+    refs.openLeadModal.addEventListener('click', ()=>{ resetForm(); openLeadModal(false); });
+    refs.openLeadModalTop.addEventListener('click', ()=>{ resetForm(); openLeadModal(false); });
+    refs.closeLeadModal.addEventListener('click', closeLeadModal);
+    refs.closeObsModal.addEventListener('click', closeObsModal);
+    refs.clearReadAlerts.addEventListener('click', ()=>{ state.alertasLidos=[]; saveAlertas(); showToast('Avisos lidos limpos.'); });
+    refs.closeScheduleModal.addEventListener('click', closeScheduleModal);
+    refs.cancelScheduleBtn.addEventListener('click', closeScheduleModal);
+    refs.saveScheduleBtn.addEventListener('click', saveSchedule);
+    refs.addHistoryBtn.addEventListener('click', ()=>{ if(!state.currentObsClientId) return; const text = prompt('Descreva a interação:'); if(!text) return; addHistory(state.currentObsClientId,'Interação',text.trim()); saveClientes(); const c=state.clientes.find(x=>x.id===state.currentObsClientId); if(c) renderTimeline(c); showToast('Interação adicionada.'); });
+
+    document.addEventListener('click', e=>{
+      const openBtn = e.target.closest('[data-open-client]'); if(openBtn) return abrirCliente(openBtn.dataset.openClient);
+      const editBtn = e.target.closest('[data-edit]'); if(editBtn){ const c=state.clientes.find(x=>x.id===editBtn.dataset.edit); if(c){ fillForm(c); openLeadModal(true); } return; }
+      const schBtn = e.target.closest('[data-schedule]'); if(schBtn) return openScheduleModal(schBtn.dataset.schedule);
+      const histBtn = e.target.closest('[data-history-client]'); if(histBtn) return abrirCliente(histBtn.dataset.historyClient);
+      const delBtn = e.target.closest('[data-delete]'); if(delBtn){ if(!confirm('Excluir este cliente?')) return; state.clientes = state.clientes.filter(c=>c.id!==delBtn.dataset.delete); saveClientes(); renderAll(); showToast('Cliente excluído.'); return; }
+      const doneBtn = e.target.closest('[data-schedule-done]'); if(doneBtn){ const [cid,sid]=doneBtn.dataset.scheduleDone.split('|'); return concluirAgendamento(cid,sid); }
+      const removeBtn = e.target.closest('[data-schedule-remove]'); if(removeBtn){ const [cid,sid]=removeBtn.dataset.scheduleRemove.split('|'); return removerAgendamento(cid,sid); }
+    });
+
+    document.addEventListener('dragstart', e=>{ const card=e.target.closest('[data-drag-id]'); if(!card) return; e.dataTransfer.setData('text/plain', card.dataset.dragId); });
+    document.addEventListener('dragover', e=>{ const col=e.target.closest('[data-drop-status]'); if(!col) return; e.preventDefault(); });
+    document.addEventListener('drop', e=>{ const col=e.target.closest('[data-drop-status]'); if(!col) return; e.preventDefault(); const id=e.dataTransfer.getData('text/plain'); const c=state.clientes.find(x=>x.id===id); if(!c) return; c.status = col.dataset.dropStatus; c.updatedAt = new Date().toISOString(); addHistory(c.id,'Mudança de status', `Lead movido para ${c.status}.`); saveClientes(); renderAll(); showToast('Status atualizado no Kanban.'); });
+
+    $$('th[data-key]').forEach(th=> th.addEventListener('click', ()=>{ const key=th.dataset.key; state.sort.dir = state.sort.key===key ? state.sort.dir*-1 : 1; state.sort.key = key; renderTable(); }));
+
+    state.clientes = state.clientes.map(sanitizeCliente);
+    saveClientes(); saveSettings();
+    renderAll();
+  </script>
+</body>
+</html>
